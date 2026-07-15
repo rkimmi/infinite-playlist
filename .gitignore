@@ -3,6 +3,7 @@ node_modules/
 dist/
 .turbo/
 *.log
+*.tsbuildinfo
 
 # env
 .env*
@@ -10,3 +11,5 @@ dist/
 
 # next
 next-env.d.ts
+
+secrets/
