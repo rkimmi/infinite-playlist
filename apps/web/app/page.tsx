@@ -1,13 +1,11 @@
-import type { MusicProvider } from "@infinite-playlist/shared-types";
-
-// Demonstrates the shared-types wiring working inside a Server Component.
-const providers: MusicProvider[] = ["spotify", "apple", "tidal"];
+import ActivityHeatMap from "./heatmap";
 
 export default function Home() {
   return (
-    <main>
-      <h1>Infinite Playlist</h1>
-      {/* <p>Supported providers: {providers.join(", ")}</p> */}
+    <main style={{ display: "flex", position: "relative", height: "100vh" }}>
+      <div style={{ width: "50%" }}>
+        <ActivityHeatMap />
+      </div>
     </main>
   );
 }

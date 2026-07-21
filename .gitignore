@@ -13,3 +13,6 @@ dist/
 next-env.d.ts
 
 secrets/
+
+.DS_Store
+**/.DS_Store
