@@ -1,11 +1,12 @@
 {
   "name": "infinite-playlist",
   "private": true,
-  "packageManager": "pnpm@10.26.1",
+  "packageManager": "pnpm@11.21.0",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
+    "dev-watch": "turbo watch dev",
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
