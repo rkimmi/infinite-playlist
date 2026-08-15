@@ -8,15 +8,20 @@
     ".": "./src/index.ts"
   },
   "scripts": {
+    "migrations:add": "drizzle-kit generate",
+    "migrations:add-rollback": "drizzle-rollback generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:rollback": "drizzle-rollback down",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "^6",
+    "@types/pg": "^8.20.0",
     "drizzle-kit": "^0.31.10",
-    "@types/pg": "^8.20.0"
+    "typescript": "^6"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",
+    "drizzle-rollback": "^0.2.1",
     "pg": "^8.22.0"
   }
 }
