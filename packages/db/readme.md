@@ -22,7 +22,6 @@ Check the generated down migration stub in ./drizzle and update as needed. Make 
 
 Make sure the DB is running, then run:
 
-
 ```bash
 pnpm run db:migrate
 ```
@@ -36,9 +35,9 @@ pnpm run db:rollback
 ## Assert in DB
 
 In the db context run:
+
 ```bash
 SELECT * FROM drizzle.__drizzle_migrations;
 ```
 
 To see all applied migrations by hash. On rollback, migrations are removed from this history.
-
