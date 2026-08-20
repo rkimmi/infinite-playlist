@@ -1,6 +1,6 @@
 /**
  * Creates an Apple Music developer token (ES256 JWT) that identifies infinite-playlist to Apple.
- * Note: NOT a apple music user token, identifies our app only. 
+ * Note: NOT a apple music user token, identifies our app only.
  */
 import { createPrivateKey, sign } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
@@ -71,5 +71,8 @@ export function createDeveloperToken(): { token: string; expiresAt: number } {
     dsaEncoding: "ieee-p1363",
   });
 
-  return { token: `${signingInput}.${b64url(signature)}`, expiresAt: exp * 1000 };
+  return {
+    token: `${signingInput}.${b64url(signature)}`,
+    expiresAt: exp * 1000,
+  };
 }

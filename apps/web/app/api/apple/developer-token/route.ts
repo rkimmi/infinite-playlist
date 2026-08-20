@@ -7,7 +7,8 @@ export function GET() {
     return Response.json({ token, expiresAt });
   } catch (err) {
     console.error("developer-token for apple music creation failed", err);
-    const message = err instanceof Error ? err.message : "apple music unknown error";
+    const message =
+      err instanceof Error ? err.message : "apple music unknown error";
     return Response.json({ error: message }, { status: 500 });
   }
 }
