@@ -14,11 +14,13 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@infinite-playlist/shared-types": "workspace:*",
+    "@hookform/resolvers": "^5.9.1",
+    "@infinite-playlist/auth": "workspace:*",
     "dotenv": "^17.4.2",
     "next": "^15",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "react-hook-form": "^7.86.0"
   },
   "devDependencies": {
     "@types/node": "^20",

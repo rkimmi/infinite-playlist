@@ -1,6 +1,9 @@
 import ActivityHeatMap from "./heatmap";
 import Nav from "./nav";
 
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "@/lib/auth";
+
 export default async function Home({ params, searchParams }) {
   return (
     <main style={{ display: "flex", position: "relative", height: "100vh" }}>

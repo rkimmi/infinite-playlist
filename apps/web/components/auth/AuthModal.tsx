@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
-import { authClient } from "@infinite-playlist/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toNodeHandler } from "better-auth/node";
+import { authClient } from "@/lib/auth-client";
+
+import SignupForm from "./SignupForm";
 
 type AuthModalProps = {
   login: boolean;
@@ -12,9 +15,40 @@ type AuthModalProps = {
 export default function AuthModal({ login, signup }: AuthModalProps) {
   const router = useRouter();
 
+  const [isPending, setPending] = useState(false);
+  const [error, setError] = useState(null);
+
   function closeModal() {
     router.push("/");
   }
+
+  const onSignupSubmit = (values: SignupFormValues) => {
+    authClient.signUp.email(
+      {
+        email: values.email,
+        name: values.username,
+        password: values.password,
+      },
+      {
+        onRequest: () => {
+          setPending(true);
+        },
+        onResponse: () => {
+          setPending(false);
+        },
+
+        onSuccess: () => {
+          console.log("success!");
+          router.push("/");
+        },
+
+        onError: ({ error }) => {
+          console.log(error);
+          setError(error);
+        },
+      },
+    );
+  };
 
   return (
     <main
@@ -50,6 +84,8 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
                 Sign up
               </div>
             </Link>
+
+            <SignupForm onSubmit={onSignupSubmit} isPending={isPending} />
           </div>
         </div>
       </div>

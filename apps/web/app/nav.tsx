@@ -1,5 +1,5 @@
 import Link from "next/link";
-import AuthModal from "@/components";
+import { AuthModal } from "@/components";
 
 type NavProps = {
   searchParams: {
