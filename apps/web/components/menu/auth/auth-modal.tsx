@@ -2,10 +2,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toNodeHandler } from "better-auth/node";
 import { authClient } from "@/lib/auth-client";
 
-import SignupForm from "./SignupForm";
+import SignupForm, { SignUpFormValues } from "./signup-form";
+import LoginForm, { LoginFormValues } from "./login-form";
 
 type AuthModalProps = {
   login: boolean;
@@ -16,13 +16,14 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
   const router = useRouter();
 
   const [isPending, setPending] = useState(false);
-  const [error, setError] = useState(null);
+  const [signupError, setSignupError] = useState(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   function closeModal() {
     router.push("/");
   }
 
-  const onSignupSubmit = (values: SignupFormValues) => {
+  const onSignupSubmit = (values: SignUpFormValues) => {
     authClient.signUp.email(
       {
         email: values.email,
@@ -39,12 +40,39 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
 
         onSuccess: () => {
           console.log("success!");
-          router.push("/");
+          router.push("/home");
         },
 
         onError: ({ error }) => {
           console.log(error);
-          setError(error);
+          setSignupError(error?.message);
+        },
+      },
+    );
+  };
+
+  const onLoginSubmit = (values: LoginFormValues) => {
+    authClient.signIn.email(
+      {
+        email: values.email,
+        password: values.password,
+      },
+      {
+        onRequest: () => {
+          setPending(true);
+        },
+        onResponse: () => {
+          setPending(false);
+        },
+
+        onSuccess: () => {
+          console.log("success!");
+          router.push("/home");
+        },
+
+        onError: ({ error }) => {
+          console.log(error);
+          setLoginError(error?.message);
         },
       },
     );
@@ -84,9 +112,22 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
                 Sign up
               </div>
             </Link>
-
-            <SignupForm onSubmit={onSignupSubmit} isPending={isPending} />
           </div>
+          {signup ? (
+            <SignupForm
+              onSubmit={onSignupSubmit}
+              isPending={isPending}
+              error={signupError}
+            />
+          ) : login ? (
+            <LoginForm
+              onSubmit={onLoginSubmit}
+              isPending={isPending}
+              error={loginError}
+            />
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </main>
