@@ -78,6 +78,12 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
     );
   };
 
+  const onAppleSignin = async () => {
+    const data = await authClient.signIn.social({
+      provider: "apple",
+    });
+  };
+
   return (
     <main
       onClick={closeModal}
@@ -128,6 +134,8 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
           ) : (
             <></>
           )}
+
+          <button onClick={onAppleSignin}>Continue with apple</button>
         </div>
       </div>
     </main>

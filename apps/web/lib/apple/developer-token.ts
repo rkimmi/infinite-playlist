@@ -18,17 +18,17 @@ interface Config {
 
 let cached: Config | null = null;
 
-/** Walk from cwd to find `secrets/musickit` */
+/** Walk from cwd to find `secrets/apple` */
 function findSecretsDir(): string {
   let dir = process.cwd();
   for (let i = 0; i < 6; i++) {
-    const candidate = join(dir, "secrets", "musickit");
+    const candidate = join(dir, "secrets", "apple");
     if (existsSync(candidate)) return candidate;
     const parent = dirname(dir);
     if (parent === dir) break;
     dir = parent;
   }
-  throw new Error("Could not find secrets/musickit walking up from cwd");
+  throw new Error("Could not find secrets/apple walking up from cwd");
 }
 
 function loadConfig(): Config {
@@ -39,10 +39,10 @@ function loadConfig(): Config {
 
   const teamId = process.env.TEAM_ID ?? process.env.APPLE_TEAM_ID;
   const keyId = process.env.KEY_ID ?? process.env.APPLE_KEY_ID;
-  const keyPath = join(dir, "musickit.p8");
+  const keyPath = join(dir, "oauth-musickit.p8");
 
   if (!teamId || !keyId) {
-    throw new Error("Missing TEAM_ID / KEY_ID in secrets/musickit/.env");
+    throw new Error("Missing TEAM_ID / KEY_ID in secrets/apple/.env");
   }
   if (!existsSync(keyPath)) {
     throw new Error(`MusicKit private key not found at ${keyPath}`);

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:https": "BETTER_AUTH_URL=https://dev.mixtaped.io:3000 next dev --hostname 127.0.0.1 --experimental-https --experimental-https-key ./dev.mixtaped.io-key.pem --experimental-https-cert ./dev.mixtaped.io.pem",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",

@@ -22,7 +22,7 @@ export default async function Home({ searchParams }) {
         <h1> Hello, {user.name}</h1>
         <Nav searchParams={await searchParams} hasSession={!!session} />
         <div style={{ display: "flex", flexWrap: "wrap", height: "100%" }}>
-          <ActivityHeatMap />
+          {/* <ActivityHeatMap /> */}
         </div>
       </div>
     </main>

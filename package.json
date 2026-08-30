@@ -7,7 +7,9 @@
   },
   "scripts": {
     "dev-watch": "turbo watch dev",
-    "dev": "turbo run dev",
+    "dev": "turbo watch",
+    "dev-watch:https": "turbo watch dev:https",
+    "dev:https": "turbo run dev:https",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

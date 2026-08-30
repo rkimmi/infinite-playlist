@@ -51,7 +51,7 @@ export default function LoginForm({
       </div>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <label htmlFor="password">Password</label>
-        <input type="password" {...register("password")} type="text" />
+        <input type="password" {...register("password")} />
       </div>
       {error && <p>{error}</p>}
       <input type="submit" />
