@@ -12,12 +12,16 @@ export const auth = betterAuth({
     apple: async () => ({
       clientId: process.env.APPLE_CLIENT_ID as string,
       clientSecret: await generateAppleClientSecret(
-        process.env.APPLE_CLIENT_ID!,
-        process.env.APPLE_TEAM_ID!,
-        process.env.APPLE_KEY_ID!,
-        process.env.APPLE_PRIVATE_KEY!,
+        process.env.APPLE_CLIENT_ID as string,
+        process.env.APPLE_TEAM_ID as string,
+        process.env.APPLE_KEY_ID as string,
+        process.env.APPLE_PRIVATE_KEY as string,
       ),
     }),
+    spotify: {
+      clientId: process.env.SPOTIFY_CLIENT_ID as string,
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET as string,
+    },
   },
   trustedOrigins: ["https://appleid.apple.com", "https://dev.mixtaped.io:3000"],
   account: {
@@ -56,7 +60,6 @@ async function generateAppleClientSecret(
   keyId: string,
   privateKeyRaw: string,
 ) {
-  //const cleanKey = privateKeyRaw.replace(/\\n/g, '\n');
   const key = await importPKCS8(privateKeyRaw, "ES256");
   const now = Math.floor(Date.now() / 1000);
   return new SignJWT({})

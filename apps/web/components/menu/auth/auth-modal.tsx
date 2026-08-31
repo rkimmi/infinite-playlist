@@ -84,6 +84,12 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
     });
   };
 
+  const onSpotifySignin = async () => {
+    const data = await authClient.signIn.social({
+      provider: "spotify",
+    });
+  };
+
   return (
     <main
       onClick={closeModal}
@@ -135,7 +141,8 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
             <></>
           )}
 
-          <button onClick={onAppleSignin}>Continue with apple</button>
+          <button onClick={onAppleSignin}>Continue with Apple</button>
+          <button onClick={onSpotifySignin}>Continue with Spotify</button>
         </div>
       </div>
     </main>
