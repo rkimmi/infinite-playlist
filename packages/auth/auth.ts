@@ -21,6 +21,7 @@ export const auth = betterAuth({
     spotify: {
       clientId: process.env.SPOTIFY_CLIENT_ID as string,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET as string,
+      scope: ["playlist-modify-public"],
     },
   },
   trustedOrigins: ["https://appleid.apple.com", "https://dev.mixtaped.io:3000"],
