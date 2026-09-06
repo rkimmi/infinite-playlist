@@ -79,14 +79,20 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
   };
 
   const onAppleSignin = async () => {
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: "apple",
     });
   };
 
   const onSpotifySignin = async () => {
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: "spotify",
+    });
+  };
+
+  const onTidalSignin = async () => {
+    await authClient.signIn.social({
+      provider: "tidal",
     });
   };
 
@@ -143,6 +149,7 @@ export default function AuthModal({ login, signup }: AuthModalProps) {
 
           <button onClick={onAppleSignin}>Continue with Apple</button>
           <button onClick={onSpotifySignin}>Continue with Spotify</button>
+          <button onClick={onTidalSignin}>Continue with Tidal</button>
         </div>
       </div>
     </main>

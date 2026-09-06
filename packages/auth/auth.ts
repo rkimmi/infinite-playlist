@@ -1,8 +1,10 @@
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@infinite-playlist/db";
+import { genericOAuth } from "better-auth/plugins";
 import { dash } from "@better-auth/infra";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { importPKCS8, SignJWT } from "jose";
+
+import { db } from "@infinite-playlist/db";
 
 import * as schema from "./auth-schema.ts";
 
@@ -28,7 +30,7 @@ export const auth = betterAuth({
   account: {
     accountLinking: {
       enabled: true,
-      trustedProviders: ["apple"],
+      trustedProviders: ["apple", "spotify", "tidal"],
     },
   },
   emailAndPassword: {
@@ -51,6 +53,41 @@ export const auth = betterAuth({
   plugins: [
     dash({
       apiKey: process.env.BETTER_AUTH_API_KEY,
+    }),
+    // TIDAL OAUTH CONFIG
+    genericOAuth({
+      config: [
+        {
+          providerId: "tidal",
+          clientId: process.env.TIDAL_CLIENT_ID!,
+          clientSecret: process.env.TIDAL_CLIENT_SECRET!,
+          authorizationUrl: "https://login.tidal.com/authorize",
+          tokenUrl: "https://auth.tidal.com/v1/oauth2/token",
+          redirectURI: "https://dev.mixtaped.io:3000/api/auth/callback/tidal",
+          scopes: ["user.read", "playlists.read", "playlists.write"],
+          pkce: true,
+          getUserInfo: async (tokens) => {
+            const response = await fetch(
+              "https://openapi.tidal.com/v2/users/me",
+              {
+                headers: {
+                  Authorization: `Bearer ${tokens.accessToken}`,
+                },
+              },
+            );
+
+            const profile = await response.json();
+            const attributes = profile.data.attributes;
+
+            return {
+              id: profile.data.id,
+              name: attributes.username,
+              email: attributes.email,
+              emailVerified: attributes.emailVerified,
+            };
+          },
+        },
+      ],
     }),
   ],
 });
