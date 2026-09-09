@@ -64,7 +64,13 @@ export const auth = betterAuth({
           authorizationUrl: "https://login.tidal.com/authorize",
           tokenUrl: "https://auth.tidal.com/v1/oauth2/token",
           redirectURI: "https://dev.mixtaped.io:3000/api/auth/callback/tidal",
-          scopes: ["user.read", "playlists.read", "playlists.write"],
+          scopes: [
+            "user.read",
+            "search.read",
+            "entitlements.read",
+            "playlists.read",
+            "playlists.write",
+          ],
           pkce: true,
           getUserInfo: async (tokens) => {
             const response = await fetch(

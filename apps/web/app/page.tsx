@@ -4,9 +4,14 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function Main({ searchParams }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api
+    .getSession({
+      headers: await headers(),
+    })
+    .catch((err) => {
+      console.log(err);
+      redirect("/");
+    });
 
   if (session) {
     redirect("/home");
