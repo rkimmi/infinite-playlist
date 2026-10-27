@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { genericOAuth } from "better-auth/plugins";
+import { genericOAuth, lastLoginMethod } from "better-auth/plugins";
 import { dash } from "@better-auth/infra";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { importPKCS8, SignJWT } from "jose";
@@ -51,6 +51,9 @@ export const auth = betterAuth({
     schema,
   }),
   plugins: [
+    lastLoginMethod({
+            storeInDatabase: true
+        }),
     dash({
       apiKey: process.env.BETTER_AUTH_API_KEY,
     }),
