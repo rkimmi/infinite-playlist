@@ -1,21 +1,22 @@
+"use client";
+
 import Link from "next/link";
 import { AuthModal, LogoutButton } from "./auth";
+import { useSearchParams } from "next/navigation";
 
 type NavProps = {
-  searchParams: {
-    login?: string;
-    signup?: string;
-  };
   hasSession: boolean;
 };
 
-export default function Nav({ searchParams, hasSession = false }: NavProps) {
-  const login = !!searchParams?.login;
-  const signup = !!searchParams?.signup;
+export default function Nav({ hasSession = false }: NavProps) {
+  const searchParams = useSearchParams();
+
+  const login = searchParams.get("login") === "true";
+  const signup = searchParams.get("signup") === "true";
 
   return (
     <>
-      <nav style={{ display: "flex", marginRight: "auto" }}>
+      <nav style={{ display: "flex" }}>
         {hasSession ? (
           <LogoutButton />
         ) : (

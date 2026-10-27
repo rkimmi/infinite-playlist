@@ -19,9 +19,7 @@ export default async function Main({ searchParams }) {
 
   return (
     <main style={{ display: "flex", position: "relative", height: "100vh" }}>
-      <div style={{ width: "100%", height: "100%" }}>
-        <Nav searchParams={await searchParams} hasSession={!!session} />
-      </div>
+      Unauthorized
     </main>
   );
 }
