@@ -17,6 +17,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
     "@infinite-playlist/auth": "workspace:*",
+    "better-auth": "^1.7.27",
     "dotenv": "^17.4.2",
     "next": "^15",
     "react": "^19",

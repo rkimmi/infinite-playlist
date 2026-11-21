@@ -19,8 +19,6 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@/components/*": ["components/*"],
-      "@/lib/*": ["lib/*"]
     },
     "target": "ES2022"
   },

@@ -6,7 +6,7 @@ import { importPKCS8, SignJWT } from "jose";
 
 import { db } from "@infinite-playlist/db";
 
-import * as schema from "./auth-schema.ts";
+import * as schema from "./auth-schema";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
