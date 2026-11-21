@@ -1,109 +1,44 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { AudioProviderFactory, CreatePlaylistRequest, TrackSearchResult } from "@/lib/services/providers";
 
 const API_URL = "https://api.spotify.com/v1/";
-
-interface Song {
-  id: string;
-  attributes: { name: string; artistName: string; albumName?: string };
-}
-
-type SpotifyTrack = {
-  id: string;
-  name: string;
-  artists?: { name: string }[];
-  album?: { name: string };
-};
 
 export default function SpotifySpikePage() {
   const [term, setTerm] = useState("daft punk");
   const [spotifyAccountId, setSpotifyAccountId] = useState<string | null>(null);
+
   const [playlistId, setPlaylistId] = useState<string | null>(null);
-  const [results, setResults] = useState<Song[]>([]);
+  const [results, setResults] = useState<TrackSearchResult[]>([]);
   const [log, setLog] = useState<string[]>([]);
+  const [spotify] = useState(() => AudioProviderFactory.get("Spotify"));
 
   const search = async () => {
     try {
-      const token = await getSpotifyToken();
-      console.log(await getSpotifyToken());
-      if (!token) return;
-      const response = await fetch(`${API_URL}search?q=${term}&type=track`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      const { tracks } = await response.json();
-      console.log(tracks);
-      if (!tracks) return;
-      // TODO handle fetch + append remaining results
-      const hasMoreResults = tracks.items?.count < tracks.total;
-      const nextUrl = hasMoreResults ? tracks.next : null;
-      const songs = mapResultsToSong(tracks.items);
-      console.log("next page results?: " + nextUrl);
-      setResults(songs);
+      const tracks = await spotify.searchTracks(term, null);
+      setResults(tracks);
     } catch (err) {
       console.error(err);
     }
-    console.log("search");
   };
 
-  const mapResultsToSong = (tracks: SpotifyTrack[]): Song[] => {
-    return tracks.map((track) => ({
-      id: track.id,
-      attributes: {
-        name: track.name,
-        artistName: track?.artists?.[0]?.name ?? "",
-        albumName: track?.album?.name,
-      },
-    }));
-  };
-
-  const getSpotifyToken = async () => {
-    const res = await authClient.getAccessToken({
-      accountId: spotifyAccountId,
-      providerId: "spotify",
-    });
-    return res.data.accessToken;
-  };
-
+  // TODO internal playlist creation
   const createPlaylist = async () => {
-    const token = await getSpotifyToken();
-
-    const response = await fetch(`${API_URL}me/playlists`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: `Infinite Playlist spike ${new Date().toLocaleDateString()}`,
-      }),
-    });
-
-    const { id, externalUrl } = await response
-      .json()
-      .catch((err) => console.error(err));
+    const playlist: CreatePlaylistRequest = {
+      name: "mixtaped spike " + Date.now(),
+      trackIds: [],
+      description: "Created from spotify spike",
+    };
+    const id = await spotify.createPlaylist(playlist);
+    say("playlist created: " + id);
     if (id) setPlaylistId(id);
   };
 
-  const addTrack = async (song: Song) => {
-    const token = await getSpotifyToken();
-
+  const addTrack = async (song: TrackSearchResult) => {
     if (!playlistId) return say("create a playlist first");
     try {
-      await fetch(`${API_URL}playlists/${playlistId}/items`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          uris: [`spotify:track:${song.id}`],
-        }),
-      });
+      await spotify.addTracks(playlistId, [song.id])
 
       say(`＋ added "${song.attributes.name}" to playlist`);
     } catch (err) {
@@ -111,9 +46,9 @@ export default function SpotifySpikePage() {
     }
   };
 
-  async function play(song: Song) {
+  async function play(song: TrackSearchResult) {
     try {
-      console.log(song);
+      await spotify.playback(song.id);
       say(`▶ ${song.attributes.artistName} — ${song.attributes.name}`);
     } catch (err) {
       say(
@@ -136,7 +71,7 @@ export default function SpotifySpikePage() {
         }
 
         const account = accounts?.find(
-          (account) => account.providerId === "spotify",
+          (account: any) => account.providerId === "spotify",
         );
 
         setSpotifyAccountId(account.accountId);
@@ -164,13 +99,13 @@ export default function SpotifySpikePage() {
           4 · Create playlist
         </button>
         <p style={{ color: "#666", fontSize: 13 }}>
-          authorized: {spotifyAccountId} · playlist: {playlistId ?? "none"}
+          authorized: { spotifyAccountId ? 'true' : 'false' } · playlist: {playlistId ?? "none"}
         </p>
       </div>
       <ol>
         {results.map((song) => (
           <li key={song.id} style={{ margin: "6px 0" }}>
-            {song.attributes.artistName} — {song.attributes.name}{" "}
+            {song.attributes.artistName} — {song.attributes.name}{" "}{song.id}
             <button onClick={() => play(song)}>3 · ▶ play</button>{" "}
             <button onClick={() => addTrack(song)} disabled={!playlistId}>
               5 · ＋ add

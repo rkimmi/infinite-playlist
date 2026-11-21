@@ -1,102 +1,52 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-type MusicKitInstance = any;
-declare global {
-  interface Window {
-    MusicKit?: any;
-  }
-}
-
-const MUSICKIT_SRC = "https://js-cdn.music.apple.com/musickit/v3/musickit.js";
-
-interface Song {
-  id: string;
-  attributes: { name: string; artistName: string; albumName?: string };
-}
+import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { AudioProviderFactory, CreatePlaylistRequest, TrackSearchResult } from "@/lib/services/providers";
 
 export default function AppleSpikePage() {
-  const music = useRef<MusicKitInstance | null>(null);
-  const [ready, setReady] = useState(false);
-  const [authorized, setAuthorized] = useState(false);
   const [term, setTerm] = useState("daft punk");
-  const [results, setResults] = useState<Song[]>([]);
+  const [appleAccountId, setAppleAccountId] = useState<string | null>(null);
+  const [results, setResults] = useState<TrackSearchResult[]>([]);
   const [playlistId, setPlaylistId] = useState<string | null>(null);
   const [log, setLog] = useState<string[]>([]);
+  const [apple] = useState(() => AudioProviderFactory.get("Apple"));
+
+  useEffect(() => {
+    async function configure() {
+      try {
+        const { data: accounts, error } = await authClient.listAccounts();
+        if (error) {
+          throw new Error(error.message);
+        }
+        const account = accounts?.find(
+          (account) => account.providerId === "apple",
+        );
+        setAppleAccountId(account.accountId);
+      } catch (err) {}
+    }
+    if (!appleAccountId) configure();
+  });
 
   const say = (msg: string) =>
     setLog((prev) => [`${new Date().toLocaleTimeString()}  ${msg}`, ...prev]);
 
-  // Load MusicKit JS, then configure it with a token from our route.
-  useEffect(() => {
-    async function configure() {
-      try {
-        const res = await fetch("/api/apple/developer-token");
-        const { token, error } = await res.json();
-        if (error) throw new Error(error);
-        await window.MusicKit!.configure({
-          developerToken: token,
-          app: { name: "Infinite Playlist", build: "0.0.0" },
-        });
-        music.current = window.MusicKit!.getInstance();
-        setReady(true);
-        setAuthorized(Boolean(music.current.isAuthorized));
-        say(`configured · storefront=${music.current.storefrontId ?? "?"}`);
-      } catch (err) {
-        say(`configure failed: ${(err as Error).message}`);
-      }
-    }
-
-    if (window.MusicKit) {
-      configure();
-      return;
-    }
-    document.addEventListener("musickitloaded", configure, { once: true });
-    if (!document.querySelector(`script[src="${MUSICKIT_SRC}"]`)) {
-      const s = document.createElement("script");
-      s.src = MUSICKIT_SRC;
-      s.async = true;
-      document.head.appendChild(s);
-    }
-    return () => document.removeEventListener("musickitloaded", configure);
-  }, []);
-
-  // Loads up apple music login portal
-  async function authorize() {
-    try {
-      // Stores token in local storage
-      // TODO: surface token, encrypt and store
-      await music.current.authorize();
-      setAuthorized(true);
-      say(
-        `authorized · user token ${music.current.musicUserToken ? "obtained" : "missing"}`,
-      );
-    } catch (err) {
-      say(`authorize failed: ${(err as Error).message}`);
-    }
-  }
-
   async function search() {
     try {
-      const storefront = music.current.storefrontId || "us";
-      const { data } = await music.current.api.music(
-        `/v1/catalog/${storefront}/search`,
-        { term, types: ["songs"], limit: 10 },
-      );
-      const songs: Song[] = data?.results?.songs?.data ?? [];
-      setResults(songs);
-      say(`search "${term}" → ${songs.length} songs`);
+      const tracks = await apple.searchTracks(term, null);
+      setResults(tracks);
+      say(`search "${term}" → ${tracks.length} songs`);
     } catch (err) {
       say(`search failed: ${(err as Error).message}`);
     }
   }
 
-  async function play(song: Song) {
+  async function play(song: TrackSearchResult) {
     try {
-      await music.current.setQueue({ song: song.id, startPlaying: true });
+      await apple.playback(song.id);
       say(`▶ ${song.attributes.artistName} — ${song.attributes.name}`);
     } catch (err) {
+      console.error(err);
       say(
         `play failed (subscription required for full tracks): ${(err as Error).message}`,
       );
@@ -105,44 +55,25 @@ export default function AppleSpikePage() {
 
   async function createPlaylist() {
     try {
-      const seed = results[0];
-      const body = {
-        attributes: {
-          name: `Infinite Playlist spike ${new Date().toLocaleDateString()}`,
-          description: "Created from Apple Music spike.",
-        },
-        relationships: seed
-          ? { tracks: { data: [{ id: seed.id, type: "songs" }] } }
-          : undefined,
+      const playlist: CreatePlaylistRequest = {
+        name: "mixtaped spike " + Date.now(),
+        trackIds: [],
+        description: "Created from apple spike",
       };
-      const { data } = await music.current.api.music(
-        "/v1/me/library/playlists",
-        {},
-        { fetchOptions: { method: "POST", body: JSON.stringify(body) } },
-      );
-      const id = data?.data?.[0]?.id;
+      const id = await apple.createPlaylist(playlist)
       setPlaylistId(id ?? null);
       say(
-        `created playlist ${id ?? "(id?)"}${seed ? ` with seed "${seed.attributes.name}"` : ""}`,
+        `created playlist ${id}`,
       );
     } catch (err) {
       say(`create failed: ${(err as Error).message}`);
     }
   }
 
-  async function addTrack(song: Song) {
+  async function addTrack(song: TrackSearchResult) {
     if (!playlistId) return say("create a playlist first");
     try {
-      await music.current.api.music(
-        `/v1/me/library/playlists/${playlistId}/tracks`,
-        {},
-        {
-          fetchOptions: {
-            method: "POST",
-            body: JSON.stringify({ data: [{ id: song.id, type: "songs" }] }),
-          },
-        },
-      );
+      await apple.addTracks(playlistId, [song.id])
       say(`＋ added "${song.attributes.name}" to playlist`);
     } catch (err) {
       say(`add track failed: ${(err as Error).message}`);
@@ -162,24 +93,21 @@ export default function AppleSpikePage() {
       <div
         style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "1rem 0" }}
       >
-        <button onClick={authorize} disabled={!ready}>
-          1 · Authorize
-        </button>
         <input
           value={term}
           onChange={(e) => setTerm(e.target.value)}
           placeholder="search songs"
           style={{ padding: "4px 8px" }}
         />
-        <button onClick={search} disabled={!ready}>
+        <button onClick={search} disabled={!appleAccountId}>
           2 · Search
         </button>
-        <button onClick={createPlaylist} disabled={!authorized}>
+        <button onClick={createPlaylist} disabled={!appleAccountId}>
           4 · Create playlist
         </button>
       </div>
       <p style={{ color: "#666", fontSize: 13 }}>
-        ready: {String(ready)} · authorized: {String(authorized)} · playlist:{" "}
+         authorized: {!appleAccountId ? 'false' : 'true'} · playlist:{" "}
         {playlistId ?? "none"}
       </p>
 

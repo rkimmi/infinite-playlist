@@ -1,7 +1,7 @@
 # Run Application
 
 ```bash
-pnpm run dev-watch
+pnpm run dev-watch:https
 ```
 
 # Run DB
