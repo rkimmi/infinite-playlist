@@ -25,12 +25,6 @@ export class Spotify implements IAudioProvider {
     throw new Error("Spotify playback not implemented.");
   }
 
-  async dispose(): Promise<void> {
-    if (!window.MusicKit) return;
-    await window.MusicKit?.unauthorize();
-    return;
-  }
-
   async searchTracks(query: string | null = null, isrc: string | null = null): Promise<TrackSearchResult[]> {
     if (!query && !isrc) {
       throw new Error("Need query or isrc for spotify lookup")
@@ -76,7 +70,8 @@ export class Spotify implements IAudioProvider {
       },
       // TODO type requests
       body: JSON.stringify({
-        name: `Infinite Playlist spike ${new Date().toLocaleDateString()}`,
+        name: playlistReq.name,
+        description: playlistReq.description,
       }),
     });
 

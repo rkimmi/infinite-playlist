@@ -25,6 +25,5 @@ export interface IAudioProvider {
   matchTracks(tracks: PlaylistTrack[]): Promise<{ tracks: PlaylistTrack[], missingTracks: PlaylistTrack[] }>;
   updatePlaylist(id: string, playlist: Playlist): Promise<string | null>;
   addTracks(playlistId: string, trackIds: string[]): Promise<void>;
-  playback(trackId: string): Promise<void>
-  dispose(): Promise<void>;
+  playback(trackId: string): Promise<void>;
 }

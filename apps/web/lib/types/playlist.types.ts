@@ -28,5 +28,5 @@ export interface Track {
   name: string;
   artistName: string;
   albumName: string;
-  providerIds: Record<ProviderKey, string>;
+  providerIds: Partial<Record<ProviderKey, string>>;
 }

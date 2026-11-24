@@ -14,10 +14,10 @@
     "typescript": "^6"
   },
   "dependencies": {
-    "@better-auth/drizzle-adapter": "^1.6.26",
+    "@better-auth/drizzle-adapter": "^1.7.27",
     "@better-auth/infra": "^0.3.7",
     "@infinite-playlist/db": "workspace:*",
-    "better-auth": "^1.6.29",
+    "better-auth": "^1.7.27",
     "drizzle-orm": "^0.45.2",
     "jose": "^6.2.10"
   }

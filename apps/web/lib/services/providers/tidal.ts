@@ -23,10 +23,6 @@ export class Tidal implements IAudioProvider {
     throw new Error("Tidal playback not yet implemented.");
   }
 
-  dispose(): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
-
   async searchTracks(query: string | null, isrc: string | null): Promise<TrackSearchResult[]> {
     if (!query && !isrc) {
       throw new Error("Need query or isrc for tidal lookup")

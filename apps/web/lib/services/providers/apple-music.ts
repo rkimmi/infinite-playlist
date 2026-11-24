@@ -25,11 +25,6 @@ export class AppleMusic implements IAudioProvider {
     this.ready.catch((err) => console.error(err));
   }
 
-  async dispose(): Promise<void> {
-    if (!window.MusicKit) return;
-    await window.MusicKit?.unauthorize();
-  }
-
   async playback(trackId: string): Promise<void> {
     await this.ready;
     return await this.music.setQueue({ song: trackId, startPlaying: true });
