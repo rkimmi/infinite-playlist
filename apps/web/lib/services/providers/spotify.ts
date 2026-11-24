@@ -1,4 +1,4 @@
-import { Playlist, PlaylistTrack, Provider } from "../../types/playlist.types";
+import { Playlist, PlaylistTrack } from "../../types/playlist.types";
 import { IAudioProvider, TrackSearchResult, CreatePlaylistRequest } from "./audio-provider.interface";
 
 import { authClient } from "@/lib/auth-client";
@@ -114,7 +114,7 @@ export class Spotify implements IAudioProvider {
           ...t.track,
           providerIds: {
             ...t.track.providerIds,
-            Spotify: spotifyTracks[0].id,
+            spotify: spotifyTracks[0].id,
           },
         },
       });
@@ -174,7 +174,7 @@ export class Spotify implements IAudioProvider {
     return tracks.map((track) => ({
       id: track.id,
       isrc: track.external_ids.isrc,
-      provider: Provider.Spotify,
+      provider: "spotify",
       attributes: {
         name: track.name,
         artistName: track?.artists?.[0]?.name ?? "",

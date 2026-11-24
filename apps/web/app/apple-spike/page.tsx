@@ -10,7 +10,7 @@ export default function AppleSpikePage() {
   const [results, setResults] = useState<TrackSearchResult[]>([]);
   const [playlistId, setPlaylistId] = useState<string | null>(null);
   const [log, setLog] = useState<string[]>([]);
-  const [apple] = useState(() => AudioProviderFactory.get("Apple"));
+  const [apple] = useState(() => AudioProviderFactory.get("apple_music"));
 
   useEffect(() => {
     async function configure() {

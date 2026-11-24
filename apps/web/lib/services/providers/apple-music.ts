@@ -1,4 +1,4 @@
-import { Playlist, PlaylistTrack, Provider } from "../../types/playlist.types";
+import { Playlist, PlaylistTrack } from "../../types/playlist.types";
 import { IAudioProvider, TrackSearchResult, CreatePlaylistRequest } from "./audio-provider.interface";
 
 type MusicKitInstance = any;
@@ -146,7 +146,7 @@ export class AppleMusic implements IAudioProvider {
           ...t.track,
           providerIds: {
             ...t.track.providerIds,
-            Apple: appleTracks[0].id,
+            apple_music: appleTracks[0].id,
           },
         },
       });
@@ -175,7 +175,7 @@ export class AppleMusic implements IAudioProvider {
       id: track.id,
       // TODO check this
       isrc: track.attributes.isrc,
-      provider: Provider.Apple,
+      provider: "apple_music",
       attributes: {
         name: track.attributes.name,
         artistName: track?.attributes.artistName ?? "",

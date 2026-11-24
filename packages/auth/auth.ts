@@ -7,6 +7,7 @@ import { importPKCS8, SignJWT } from "jose";
 import { db } from "@infinite-playlist/db";
 
 import * as schema from "./auth-schema";
+import { authoriseFromLoginAccount } from "./provider-auth";
 
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
@@ -28,9 +29,18 @@ export const auth = betterAuth({
   },
   trustedOrigins: ["https://appleid.apple.com", "https://dev.mixtaped.io:3000"],
   account: {
+    encryptOAuthTokens: true,
     accountLinking: {
       enabled: true,
       trustedProviders: ["apple", "spotify", "tidal"],
+      allowDifferentEmails: true,
+    },
+  },
+  databaseHooks: {
+    account: {
+      // Logging in/linking Spotify or Tidal also authorises music library access.
+      create: { after: authoriseFromLoginAccount },
+      update: { after: authoriseFromLoginAccount },
     },
   },
   emailAndPassword: {

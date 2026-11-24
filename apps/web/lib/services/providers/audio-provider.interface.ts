@@ -1,9 +1,10 @@
-import { Provider, Playlist, PlaylistTrack } from "../../types/playlist.types";
+import type { MusicProvider } from "@infinite-playlist/shared-types";
+import { Playlist, PlaylistTrack } from "../../types/playlist.types";
 
 export type TrackSearchResult = {
   id: string;
   isrc: string;
-  provider: Provider;
+  provider: MusicProvider;
   attributes: { name: string; artistName?: string; albumName?: string };
 }
 

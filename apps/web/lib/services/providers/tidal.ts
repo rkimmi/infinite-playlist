@@ -1,4 +1,4 @@
-import { Playlist, PlaylistTrack, Provider } from "../../types/playlist.types";
+import { Playlist, PlaylistTrack } from "../../types/playlist.types";
 import { CreatePlaylistRequest, IAudioProvider, TrackSearchResult } from "./audio-provider.interface";
 import { authClient } from "@/lib/auth-client";
 
@@ -180,7 +180,7 @@ export class Tidal implements IAudioProvider {
           ...t.track,
           providerIds: {
             ...t.track.providerIds,
-            Tidal: tidalTracks[0].id,
+            tidal: tidalTracks[0].id,
           },
         },
       });
@@ -301,7 +301,7 @@ export class Tidal implements IAudioProvider {
       return {
         id: track.id,
         isrc: track.attributes.isrc,
-        provider: Provider.Tidal,
+        provider: "tidal",
         attributes: {
           name: track.attributes.title,
           // TODO clean up first pick

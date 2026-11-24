@@ -1,19 +1,13 @@
+import type { MusicProvider } from "@infinite-playlist/shared-types";
+
 export interface Playlist {
   id: string;
   name: string;
   // TODO relate to playlist hosts via association table
-  providerIds: Partial<Record<ProviderKey, string>>;
+  providerIds: Partial<Record<MusicProvider, string>>;
   tracks: PlaylistTrack[];
   description: string;
 }
-
-export enum Provider {
-  Spotify = "spotify",
-  Apple = "apple",
-  Tidal = "tidal",
-}
-
-export type ProviderKey = keyof typeof Provider;
 
 export interface PlaylistTrack {
   id: string;
@@ -28,5 +22,5 @@ export interface Track {
   name: string;
   artistName: string;
   albumName: string;
-  providerIds: Partial<Record<ProviderKey, string>>;
+  providerIds: Partial<Record<MusicProvider, string>>;
 }

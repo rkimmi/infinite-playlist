@@ -12,7 +12,7 @@ export default function SpotifySpikePage() {
   const [playlistId, setPlaylistId] = useState<string | null>(null);
   const [results, setResults] = useState<TrackSearchResult[]>([]);
   const [log, setLog] = useState<string[]>([]);
-  const [spotify] = useState(() => AudioProviderFactory.get("Spotify"));
+  const [spotify] = useState(() => AudioProviderFactory.get("spotify"));
 
   const search = async () => {
     try {

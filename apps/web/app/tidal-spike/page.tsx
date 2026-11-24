@@ -11,7 +11,7 @@ export default function TidalSpikePage() {
   const [playlistId, setPlaylistId] = useState<string | null>(null);
   const [results, setResults] = useState<TrackSearchResult[]>([]);
   const [log, setLog] = useState<string[]>([]);
-  const [tidal] = useState(() => AudioProviderFactory.get("Tidal"));
+  const [tidal] = useState(() => AudioProviderFactory.get("tidal"));
 
   const search = async () => {
     try {

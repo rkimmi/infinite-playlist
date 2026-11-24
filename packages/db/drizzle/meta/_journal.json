@@ -15,6 +15,13 @@
       "when": 1793090188771,
       "tag": "0001_add_last_login_method_users",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795554619948,
+      "tag": "0002_add_provider_authorisation",
+      "breakpoints": true
     }
   ]
 }
